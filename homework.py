@@ -20,7 +20,9 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-handler = RotatingFileHandler('my_logger.log', maxBytes=50000000, backupCount=5)
+handler = RotatingFileHandler('my_logger.log',
+                              maxBytes=50000000,
+                              backupCount=5)
 logger.addHandler(handler)
 
 
@@ -54,7 +56,9 @@ def get_homework_statuses(current_timestamp):
     default_timestamp = int(time.time())
     params = {'from_date': current_timestamp or default_timestamp}
     try:
-        homework_statuses = requests.get(url=URL, headers=HEADERS, params=params)
+        homework_statuses = requests.get(url=URL,
+                                         headers=HEADERS,
+                                         params=params)
     except requests.exceptions.HTTPError:
         logger.error('Ошибка ответа сервера')
     return homework_statuses.json()
