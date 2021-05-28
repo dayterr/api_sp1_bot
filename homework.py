@@ -39,17 +39,17 @@ except (KeyError, NameError):
 def parse_homework_status(homework):
     homework_name = homework.get('homework_name')
     status = homework.get('status')
+    if homework_name is None or status is None:
+        logger.error('Неверный ответ сервера')
+        return 'Произошла ошибка на сервере'
     stat_verdicts = {
         'rejected': 'К сожалению в работе нашлись ошибки.',
         'reviewing': 'Работа проверяется',
         'approved': ('Ревьюеру всё понравилось, '
                      'можно приступать к следующему уроку.')
     }
-    if homework_name is None or status is None:
-        logger.error('Неверный ответ сервера')
-        return 'Произошла ошибка на сервере'
     verdict = stat_verdicts[status]
-    return f'У Вас проверили работу "{homework_name}"!\n\n{verdict}'
+    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
 
 def get_homework_statuses(current_timestamp):
