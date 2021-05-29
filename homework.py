@@ -19,10 +19,12 @@ logging.basicConfig(
     level=logging.INFO,
     filename=LOG_NAME,
     format=FORMAT,
-    handler=RotatingFileHandler(LOG_NAME,
-                              maxBytes=50000000,
-                              backupCount=5)
+
 )
+
+handler=RotatingFileHandler(LOG_NAME,
+                            maxBytes=50000000,
+                            backupCount=5)
 
 try:
     PRAKTIKUM_TOKEN = os.environ['PRAKTIKUM_TOKEN']
