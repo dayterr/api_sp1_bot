@@ -59,8 +59,8 @@ def parse_homework_status(homework):
 
 
 def get_homework_statuses(current_timestamp):
-    default_timestamp = int(time.time())
-    params = {'from_date': current_timestamp or default_timestamp}
+    timestamp = current_timestamp or int(time.time())
+    params = {'from_date': timestamp}
     try:
         homework_statuses = requests.get(url=URL,
                                          headers=HEADERS,
@@ -106,7 +106,7 @@ def main():
             if not new_homework.get('homeworks'):
                 if time_passed % 1800 == 0:
                     h = time_passed // 3600
-                    m = time_passed % 3600 // 1800
+                    m = time_passed % 3600 // 60
                     if not status_cache:
                         msg = 'Работа в ожидании, '
                     if status_cache == 'reviewing':
