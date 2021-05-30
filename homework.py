@@ -39,12 +39,6 @@ URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
 TIME_TO_WAIT = 900
 
 
-def choose_message(hw_stat):
-    """Эта фунцкия определяет в соответствии со статусом домашнего задания,
-    какое сообщение отправить"""
-
-
-
 def parse_homework_status(homework):
     homework_name = homework.get('homework_name')
     status = homework.get('status')
@@ -110,17 +104,16 @@ def main():
                 send_message(hw_status, bot)
                 logging.info(f'Сообщение "{hw_status}" отправлено')
                 break
-            if not new_homework.get('homeworks'):
-                if time_passed % 1800 == 0:
-                    h = time_passed // 3600
-                    m = time_passed % 3600 // 60
-                    if not status_cache:
-                        msg = 'Работа в ожидании, '
-                    if status_cache == 'reviewing':
-                        msg = 'Работа проверяется, '
-                    msg += f'прошло {h} h {m} min'
-                    send_message(msg, bot)
-                    logging.info(f'Сообщение "{msg}" отправлено')
+            if not new_homework.get('homeworks') and time_passed % 1800 == 0:
+                h = time_passed // 3600
+                m = time_passed % 3600 // 60
+                if not status_cache:
+                    msg = 'Работа в ожидании, '
+                if status_cache == 'reviewing':
+                    msg = 'Работа проверяется, '
+                msg += f'прошло {h} h {m} min'
+                send_message(msg, bot)
+                logging.info(f'Сообщение "{msg}" отправлено')
             current_timestamp = new_homework.get('current_date',
                                                  current_timestamp)
             time.sleep(TIME_TO_WAIT)
