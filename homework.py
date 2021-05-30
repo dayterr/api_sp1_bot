@@ -23,8 +23,8 @@ logging.basicConfig(
 )
 
 handler = RotatingFileHandler(LOG_NAME,
-                            maxBytes=50000000,
-                            backupCount=5)
+                              maxBytes=50000000,
+                              backupCount=5)
 
 try:
     PRAKTIKUM_TOKEN = os.environ['PRAKTIKUM_TOKEN']
@@ -37,6 +37,11 @@ except KeyError as e:
 HEADERS = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
 URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
 TIME_TO_WAIT = 900
+
+
+def choose_message(hw_stat):
+    """Эта фунцкия определяет в соответствии со статусом домашнего задания,
+    какое сообщение отправить"""
 
 
 def parse_homework_status(homework):
