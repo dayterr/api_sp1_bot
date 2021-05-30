@@ -96,14 +96,14 @@ def main():
             if new_homework.get('homeworks'):
                 hw_status = parse_homework_status(
                     new_homework.get('homeworks')[0])
-            if 'проверка' in hw_status:
-                status_cache = 'reviewing'
-                send_message(hw_status, bot)
-                logging.info(f'Сообщение "{hw_status}" отправлено')
-            if 'ошибки' in hw_status or 'можно' in hw_status:
-                send_message(hw_status, bot)
-                logging.info(f'Сообщение "{hw_status}" отправлено')
-                break
+                if 'проверка' in hw_status:
+                    status_cache = 'reviewing'
+                    send_message(hw_status, bot)
+                    logging.info(f'Сообщение "{hw_status}" отправлено')
+                if 'ошибки' in hw_status or 'можно' in hw_status:
+                    send_message(hw_status, bot)
+                    logging.info(f'Сообщение "{hw_status}" отправлено')
+                    break
             if not new_homework.get('homeworks') and time_passed % 1800 == 0:
                 h = time_passed // 3600
                 m = time_passed % 3600 // 60
