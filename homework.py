@@ -22,7 +22,7 @@ logging.basicConfig(
 
 )
 
-handler=RotatingFileHandler(LOG_NAME,
+handler = RotatingFileHandler(LOG_NAME,
                             maxBytes=50000000,
                             backupCount=5)
 
@@ -37,6 +37,7 @@ except KeyError as e:
 HEADERS = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
 URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
 TIME_TO_WAIT = 900
+
 
 def parse_homework_status(homework):
     homework_name = homework.get('homework_name')
