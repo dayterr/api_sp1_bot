@@ -19,12 +19,11 @@ logging.basicConfig(
     level=logging.INFO,
     filename=LOG_NAME,
     format=FORMAT,
-
+    handlers=RotatingFileHandler(LOG_NAME,
+                                 maxBytes=50000000,
+                                 backupCount=5),
 )
 
-handler = RotatingFileHandler(LOG_NAME,
-                              maxBytes=50000000,
-                              backupCount=5)
 
 try:
     PRAKTIKUM_TOKEN = os.environ['PRAKTIKUM_TOKEN']
@@ -53,7 +52,9 @@ def parse_homework_status(homework):
     }
     verdict = stat_verdicts.get(status)
     if verdict is None:
-        logging.error(f'Неизвестный статус: {verdict}')
+        msg = f'Неизвестный статус: {verdict}'
+        logging.error(msg)
+        return msg
     if status == 'reviewing':
         return verdict
     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
@@ -86,27 +87,23 @@ def main():
     logging.debug(start_msg)
     send_message(start_msg, bot)
     status_cache = ''
-    i = 0
-    time_passed = 0
+    start_time = int(time.time())
 
     while True:
         try:
             new_homework = get_homework_statuses(current_timestamp)
-
+            time_passed = int(time.time()) - start_time
             if new_homework.get('homeworks'):
                 hw_status = parse_homework_status(
                     new_homework.get('homeworks')[0])
                 if 'проверка' in hw_status:
                     status_cache = 'reviewing'
-                    send_message(hw_status, bot)
-                    logging.info(f'Сообщение "{hw_status}" отправлено')
                 if 'ошибки' in hw_status or 'можно' in hw_status:
-                    send_message(hw_status, bot)
-                    logging.info(f'Сообщение "{hw_status}" отправлено')
-                    break
+                    status_cache = 'reviewed'
+                send_message(hw_status, bot)
+                logging.info(f'Сообщение "{hw_status}" отправлено')
             if not new_homework.get('homeworks') and time_passed % 1800 == 0:
-                h = time_passed // 3600
-                m = time_passed % 3600 // 60
+                h, m = time.strftime("%H, %M", time_passed)
                 if not status_cache:
                     msg = 'Работа в ожидании, '
                 if status_cache == 'reviewing':
@@ -117,12 +114,11 @@ def main():
             current_timestamp = new_homework.get('current_date',
                                                  current_timestamp)
             time.sleep(TIME_TO_WAIT)
-            i += 1
-            time_passed = TIME_TO_WAIT * i
 
         except Exception as exc:
-            logging.error(f'Бот столкнулся с ошибкой: {exc}')
-            send_message(f'Бот столкнулся с ошибкой: {exc}', bot)
+            msg = f'Бот столкнулся с ошибкой: {exc}'
+            logging.error(msg)
+            send_message(msg, bot)
             time.sleep(5)
 
 
