@@ -89,7 +89,6 @@ def main():
     while True:
         try:
             new_homework = get_homework_statuses(current_timestamp)
-            time_passed = int(time.time()) - start_time
             if new_homework.get('homeworks'):
                 hw_status = parse_homework_status(
                     new_homework.get('homeworks')[0])
@@ -99,13 +98,15 @@ def main():
                     status_cache = 'reviewed'
                 send_message(hw_status, bot)
                 logging.info(f'Сообщение "{hw_status}" отправлено')
-            if not new_homework.get('homeworks') and time_passed % 1800 == 0:
-                h, m = time.strftime("%H, %M", time.gmtime(time_passed))
+            time_passed = int(time.time()) - start_time
+            mns = int(time.strftime("%M", time.gmtime(time_passed)))
+            if not new_homework.get('homeworks') and mns % 10 == 0:
+                hrs = int(time.strftime("%H", time.gmtime(time_passed)))
                 if not status_cache:
                     msg = 'Работа в ожидании, '
                 if status_cache == 'reviewing':
                     msg = 'Работа проверяется, '
-                msg += f'прошло {h} h {m} min'
+                msg += f'прошло {hrs} h {mns} min'
                 send_message(msg, bot)
                 logging.info(f'Сообщение "{msg}" отправлено')
             current_timestamp = new_homework.get('current_date',
