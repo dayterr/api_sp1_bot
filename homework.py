@@ -16,12 +16,9 @@ FORMAT = '%(asctime)s, %(levelname)s, %(message)s, %(name)s'
 LOG_NAME = os.path.join(BASE_DIR, 'yphwbot.log')
 
 logging.basicConfig(
+    handlers=[RotatingFileHandler(LOG_NAME, maxBytes=50000000, backupCount=5)],
     level=logging.INFO,
-    filename=LOG_NAME,
     format=FORMAT,
-    handlers=RotatingFileHandler(LOG_NAME,
-                                 maxBytes=50000000,
-                                 backupCount=5),
 )
 
 
@@ -103,7 +100,7 @@ def main():
                 send_message(hw_status, bot)
                 logging.info(f'Сообщение "{hw_status}" отправлено')
             if not new_homework.get('homeworks') and time_passed % 1800 == 0:
-                h, m = time.strftime("%H, %M", time_passed)
+                h, m = time.strftime("%H, %M", time.gmtime(time_passed))
                 if not status_cache:
                     msg = 'Работа в ожидании, '
                 if status_cache == 'reviewing':
