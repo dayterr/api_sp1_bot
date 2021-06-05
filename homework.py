@@ -84,32 +84,21 @@ def main():
     start_msg = 'Ботик запущен'
     logging.debug(start_msg)
     send_message(start_msg, bot)
-    status_cache = ''
     start_time = int(time.time())
 
     while True:
         try:
             new_homework = get_homework_statuses(current_timestamp)
-            if new_homework.get('homeworks'):
-                hw_status = parse_homework_status(
-                    new_homework.get('homeworks')[0])
-                if 'проверка' in hw_status:
-                    status_cache = 'reviewing'
-                if 'ошибки' in hw_status or 'можно' in hw_status:
-                    status_cache = 'reviewed'
+            homeworks = new_homework.get('homeworks')
+            if homeworks:
+                hw_status = parse_homework_status(homeworks[0])
                 send_message(hw_status, bot)
                 logging.info(f'Сообщение "{hw_status}" отправлено')
-                status_cache = ''
-            time_passed = int(time.time()) - start_time
             mns = datetime.datetime.now().minute
-            if not new_homework.get('homeworks') and mns <= 15:
+            if not homeworks and mns <= 15:
+                time_passed = int(time.time()) - start_time
                 hrs = int(time.strftime("%H", time.gmtime(time_passed)))
-                msg = ''
-                if not status_cache:
-                    msg = 'Работа в ожидании, '
-                if status_cache == 'reviewing':
-                    msg = 'Работа проверяется, '
-                msg += f'прошло {hrs} h'
+                msg = f'Прошло {hrs} h'
                 send_message(msg, bot)
                 logging.info(f'Сообщение "{msg}" отправлено')
             current_timestamp = new_homework.get('current_date',
