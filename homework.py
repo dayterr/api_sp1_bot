@@ -99,12 +99,13 @@ def main():
                     status_cache = 'reviewed'
                 send_message(hw_status, bot)
                 logging.info(f'Сообщение "{hw_status}" отправлено')
-                status_cache = None
+                status_cache = ''
             time_passed = int(time.time()) - start_time
             mns = datetime.datetime.now().minute
             if not new_homework.get('homeworks') and mns <= 15:
                 hrs = int(time.strftime("%H", time.gmtime(time_passed)))
-                if status_cache is None:
+                msg = ''
+                if not status_cache:
                     msg = 'Работа в ожидании, '
                 if status_cache == 'reviewing':
                     msg = 'Работа проверяется, '
