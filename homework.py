@@ -1,3 +1,4 @@
+import datetime
 import logging
 import os
 import sys
@@ -98,15 +99,16 @@ def main():
                     status_cache = 'reviewed'
                 send_message(hw_status, bot)
                 logging.info(f'Сообщение "{hw_status}" отправлено')
+                status_cache = None
             time_passed = int(time.time()) - start_time
-            mns = int(time.strftime("%M", time.gmtime(time_passed)))
-            if not new_homework.get('homeworks') and mns % 10 == 0:
+            mns = datetime.datetime.now().minute
+            if not new_homework.get('homeworks') and mns <= 15:
                 hrs = int(time.strftime("%H", time.gmtime(time_passed)))
-                if not status_cache:
+                if status_cache is None:
                     msg = 'Работа в ожидании, '
                 if status_cache == 'reviewing':
                     msg = 'Работа проверяется, '
-                msg += f'прошло {hrs} h {mns} min'
+                msg += f'прошло {hrs} h'
                 send_message(msg, bot)
                 logging.info(f'Сообщение "{msg}" отправлено')
             current_timestamp = new_homework.get('current_date',
